@@ -1,33 +1,36 @@
 # ESP32-CAM_TANK
 
-This is fork of PepeTheFroggie's project [https://github.com/PepeTheFroggie/ESP32CAM_RCTANK],
-a nice example of using ESP32 CAM (IP connected tank streaming wideo and serving its own controller web page.
-It is good starting example demonstrating
-- controlling two DC motors by 4 pins
-- controlling servo
-- controlling LED on the board
-- web server
+This is fork of PepeTheFroggie's project [https://github.com/PepeTheFroggie/ESP32CAM_RCTANK]("ESP32CAM_RCTANK") which is a nice starting example for ESP32 CAM projects.
+IP connected tank is controlled from web browser. One can see where the tank is heading as it streams the video from the camera directly to web browser. Servo can be used for further pointing the camera and user can control amount of light emited by LED on the ESP32 CAM board.
 
-This fork aims to adds some clutter to the example to permit
-- posting acquired dynamic IP address to DynamicDNS. This resolves the problem of finding IP address of your IOT gadget when your network WiFi gives you only dynamic address.  (not committed yet)
-- enabling multiple WIFI credentials (not committed yet)
-- indication of the connection by blinking LED
+This fork of the project aims to add some more features as listed below.
+
+- Dynamic IP address of ESP32-CAM is posted at the start-up to the dynamic DNS server (DuckDNS). This permits to point the browser to always the same symbolic IP. The dynamic IP address is frequently different when reconnecting. One has to connect to serial port of the gadget to get it which is not convenient.
+
+- The ESP-CAM reports the status of connection by blinking its LED. It is blinking in two bursts. 
+   - The first burst: 1 blink - conected to wifi, 2 blinks - switched to soft access point mode (user can still connect to ESP32-CAM as it runs its own access point).
+   - The second burst: 1 blink- IP sent to DynamicDHCP, 2 blinks- sending to DynamicDHCP was not configured, 3 blinks - sending of IP address failed.
 
 
-Esp32 controlling tracked vehicle while streaming video.
-Serial console tells you where to connect. And use your own wifi credentials, not mine.
 
-Wiring:
-![esp32cam.jpg](esp32cam.jpg "Wiring")
+## Wiring:
+![wiring.jpg](pictures/wiring.jpg "Wiring")
 
-Control:
-![DSC02367.jpg](DSC02367.jpg "Control")
+## Compilation 
+Please make sure that you have either selected ESP32 Wrover Module or another board which has PSRAM enabled in Arduino IDE.
 
-Build:
-![DSC02365.jpg](DSC02365.jpg "Build")
+Rename tempate_secrates.h. to secrates.h and fill in your MY_SSID and MY_PASSWORD of your wifi. If there is no password required , write NULL instead (without quotes)
 
-Extern antenna:
-![DSC02372.jpg](DSC02372.jpg "extant")
+If you want to be able to refer to your ESP32CAM by symbolic name, register at https://www.duckdns.org service and select name of the service. Fill in API key to MY_DUCKDNS_TOKEN and name to MY_DUCKDNS_NAME in secrates.h
 
-Video:
-https://youtu.be/qUAGnk382mc
+
+## Browser screen-shot:
+![browser.png](pictures/browser.png "Control")
+
+## Build (remake and original):
+![remake.jpg](pictures/remake.jpg "Remake")
+![original_detail.jpg](pictures/original_detail.jpg "Original - detail")
+![original.jpg](pictures/original.jpg "Original")
+
+## Video:
+[https://youtu.be/qUAGnk382mc](https://youtu.be/qUAGnk382mc)

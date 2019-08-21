@@ -1,20 +1,21 @@
 /*
 ESP32-CAM Remote Control 
 */
+// Compilation&Instalation notes
+// Make sure that you have either selected ESP32 Wrover Module or another board which has PSRAM enabled ( in Arduino IDE)
+// Rename tempate_secrates.h. to secrates.h and fill in your MY_SSID and MY_PASSWORD of your wifi
+// If you want to be able to refer to your ESP32CAM by symbolic name , register at https://www.duckdns.org service and select name of the service
+//  fill in API key to MY_DUCKDNS_TOKEN and name to MY_DUCKDNS_NAME in secrates.h
+// LED blinks in two bursts where count of blinks in burst indicates a state
+//   first burst: 1 blink= conected to wifi, 2 blinks - switched to soft access point mode (user can still connect to this softAP)
 
-const char* ssid = "FSM";
-const char* password = "0101010101";
-
+#include "secrets.h"
 #include "esp_wifi.h"
 #include "esp_camera.h"
 #include <WiFi.h>
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-
-//
-// WARNING!!! Make sure that you have either selected ESP32 Wrover Module,
-//            or another board which has PSRAM enabled
-//
+#include <HTTPClient.h>
 
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT
@@ -82,6 +83,9 @@ const char* password = "0101010101";
 #error "Camera model not selected"
 #endif
 
+const char* ssid = MY_SSID;
+const char* password = MY_PASSWORD;
+
 void startCameraServer();
 
 const int MotPin0 = 12;  
@@ -106,6 +110,16 @@ void initServo()
 {
   ledcSetup(8, 50, 16); // 50 hz PWM, 16-bit resolution, range from 3250 to 6500.
   ledcAttachPin(ServoPin, 8); 
+}
+
+void Blink( int n ){
+  for (int i = 0 ; i < n ; i++) 
+  {
+    ledcWrite(7,10);  // flash led
+    delay(100);
+    ledcWrite(7,0);
+    delay(100);    
+  }   
 }
 
 void setup() 
@@ -194,31 +208,55 @@ void setup()
   {
     Serial.println("");
     Serial.println("WiFi connected");    
-    Serial.print("Camera Ready! Use 'http://");
+    Serial.print("Use 'http://");
     Serial.print(WiFi.localIP());
     Serial.println("' to connect");
+    Blink( 1 );
+
   } else {
     Serial.println("");
-    Serial.println("WiFi disconnected");      
-    Serial.print("Camera Ready! Use 'http://");
+    Serial.println("WiFi disconnected. Creating own access point. Use SSID:ESP32-CAM and PASSWORD:12345678 to connect");      
     Serial.print(WiFi.softAPIP());
     Serial.println("' to connect");
     char* apssid = "ESP32-CAM";
     char* appassword = "12345678";         //AP password require at least 8 characters.
-    WiFi.softAP((WiFi.softAPIP().toString()+"_"+(String)apssid).c_str(), appassword);    
+    WiFi.softAP((WiFi.softAPIP().toString()+"_"+(String)apssid).c_str(), appassword);
+    Blink( 2 );
   }
 
-  for (int i=0;i<5;i++) 
-  {
-    ledcWrite(7,10);  // flash led
-    delay(200);
-    ledcWrite(7,0);
-    delay(200);    
-  }       
+  delay(1000);
+
+#ifdef MY_DUCKDNS_TOKEN
+  // Send IP to DuckDNS
+  HTTPClient http;
+  String sIP;
+  sIP=WiFi.localIP().toString();
+  String sURI= String("https://www.duckdns.org/update?domains=") + String(MY_DUCKDNS_NAME) + String("&token=") + String(MY_DUCKDNS_TOKEN) + String("&ip=") + sIP ;
+  Serial.println(sURI);
+  http.begin(sURI);
+  int httpCode = http.GET();  
+  if (httpCode > 0) { //Check for the returning code
+    String payload = http.getString();
+    Serial.println(httpCode);
+    Serial.println(payload);
+    Blink( 1 );
+  }else {
+    Serial.println("Error on HTTP request");
+    Blink( 3 );
+  } 
+  http.end(); //Free the resources       
+#else
+  Serial.println("Not using DuckDNS.");
+  Blink( 2 );
+#endif
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  delay(1000);
-  Serial.printf("RSSi: %ld dBm\n",WiFi.RSSI()); 
+  int count=0;
+  delay(100);
+  if ( count > 100 ){
+    Serial.printf("RSSi: %ld dBm\n",WiFi.RSSI());
+    count=0;
+  } 
+  count++;
 }
