@@ -16,6 +16,15 @@ This fork of the project aims to add some more features as listed below.
 ## Wiring:
 ![wiring.jpg](pictures/wiring.jpg "Wiring")
 
+## Component list
+
+[ESP32CAM](https://www.banggood.com/Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32-With-Camera-Module-OV2640-p-1394679.html?utm_source=google&utm_medium=cpc_ods&utm_content=aurogon&utm_campaign=aurogon-all-sdsrm-g-display-m-1966-content&ad_id=353999927696&gclid=CjwKCAjwqZPrBRBnEiwAmNJsNoBiIJ_HN9hZDhTrj24Ff9dTkfuL-xUNA9b_g0BPsewNYZln9nWLHxoC9t8QAvD_BwE&cur_warehouse=CN)
+
+[L9110 Dual DC Stepper Motor Driver Controller Board Mod](https://www.aliexpress.com/item/32882999371.html?spm=a2g0s.9042311.0.0.269b4c4d2B0xjl)
+
+[USB/serial](https://www.aliexpress.com/item/32943414281.html?spm=a2g0s.9042311.0.0.27424c4dLUWupA)
+[Mini servo](https://www.dx.com/p/towerpro-sg90-9g-mini-servo-with-accessories-2005529#.XWVPwegzYog)
+
 ## Compilation 
 Please make sure that you have either selected ESP32 Wrover Module or another board which has PSRAM enabled in Arduino IDE.
 
