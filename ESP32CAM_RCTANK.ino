@@ -225,6 +225,8 @@ void setup()
   }
 
   delay(1000);
+  Serial.print("MAC ADDRESS=");
+  Serial.println(WiFi.macAddress());
 
 #ifdef MY_DUCKDNS_TOKEN
   // Send IP to DuckDNS
